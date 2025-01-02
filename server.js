@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const passwordRoutes = require('./routes/password');
-const bcrypt = require('bcrypt');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -20,17 +19,22 @@ mongoose
   .then(() => console.log('MongoDB bağlantısı başarılı!'))
   .catch((err) => console.error('MongoDB bağlantı hatası:', err));
 
-  
 app.get('/', (req, res) => {
   res.send('Password Manager API Çalışıyor!');
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/passwords', passwordRoutes);
+
 // Test endpoint'i ekleyelim
 app.get('/test', (req, res) => {
   res.json({ message: 'Sunucu çalışıyor!' });
 });
-// Sunucu Başlatma
-app.listen(PORT, () => {
-  console.log(`Sunucu ${PORT} portunda çalışıyor.`);
-});
+
+if (require.main === module) {
+  // Bu kısım sadece server.js doğrudan çalıştırıldığında devreye girecek
+  app.listen(PORT, () => {
+    console.log(`Sunucu ${PORT} portunda çalışıyor.`);
+  });
+}
+
+module.exports = app;  // app'i export ediyoruz
